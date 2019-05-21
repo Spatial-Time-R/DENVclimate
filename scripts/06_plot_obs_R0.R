@@ -21,7 +21,7 @@ foi_data <- readRDS(file.path("output", "extracted_covariates.rds"))
 # make plots ------------------------------------------------------------------
 
 
-for (i in 1:seq_along(covariates)){
+for (i in seq_along(covariates)){
 
   dir.create(dir_save, FALSE, TRUE)
 
@@ -39,13 +39,13 @@ for (i in 1:seq_along(covariates)){
   plot(foi_data[, covar],
        foi_data[, response],
        xlab = covar,
-       ylab = var,
+       ylab = response,
        pch = 19,
        cex = 0.5)
 
-  # j <- order(foi_data[, covar])
-  # l_1 <- loess(as.formula(paste0(var, "~", covar)), data = foi_data)
-  # lines(foi_data[, covar][j], l_1$fitted[j], col = "red", lwd = 3)
+  j <- order(foi_data[, covar])
+  l_1 <- loess(as.formula(paste0(response, "~", covar)), data = foi_data)
+  lines(foi_data[, covar][j], l_1$fitted[j], col = "red", lwd = 3)
 
   dev.off()
 
