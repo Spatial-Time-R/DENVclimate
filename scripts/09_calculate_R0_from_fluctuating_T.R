@@ -1,4 +1,4 @@
-# load results and save 
+# calculate R0 with daily ((nocturnal or diurnal) fluctuating temp
 
 options(didehpc.cluster = "fi--didemrchnb")
 
@@ -18,30 +18,18 @@ ctx <- context::context_save(path = "context",
 # define parameters -----------------------------------------------------------
 
 
-dir_save <- file.path("output", "trait_R0_relationships")
+in_path <- file.path("output", "termal_response_fits", "informative")
 
-covariates <- c("NightTemp_const_term", "DayTemp_const_term")
+dir_save <- file.path("figures", "trait_R0_relationships")
 
-var <- "pred_R0_1"
-
-
-# define variables ------------------------------------------------------------
-
-
-covar <- covariates[1]
-
-
-# load data -------------------------------------------------------------------
-
-
-foi_data <- read.csv(file.path("output", "extracted_covariates.csv"))
+TS_file_name <- "TS2_DayTemp.rds"
 
 
 # are you using the cluster? --------------------------------------------------  
 
 
 if (CLUSTER) {
-  
+
   obj <- didehpc::queue_didehpc(ctx)
   
 } else {
@@ -52,23 +40,68 @@ if (CLUSTER) {
 }
 
 
-# get the results -------------------------------------------------------------
+# load data -------------------------------------------------------------------
 
 
-all_bundles <- obj$task_bundle_info()
+a_samps <- readRDS(file.path(in_path, "a_samps.rds"))
+b_samps <- readRDS(file.path(in_path, "b_samps.rds"))
+c_samps <- readRDS(file.path(in_path, "c_samps.rds"))
+MDR_samps <- readRDS(file.path(in_path, "MDR_samps.rds"))
+EFD_samps <- readRDS(file.path(in_path, "EFD_samps.rds")) 
+e2a_samps <- readRDS(file.path(in_path, "e2a_samps.rds"))
+PDR_samps <- readRDS(file.path(in_path, "PDR_samps.rds"))
+lf_samps <- readRDS(file.path(in_path, "lf_DENV_samps.rds"))
 
-id <- all_bundles[nrow(all_bundles), "name"]
+foi_data <- read.csv(file.path("output", "extracted_covariates.csv"))
 
-task_obj <- obj$task_bundle_get(id)
-
-all_results <- task_obj$results()
-
-all_results_mat <- do.call("rbind", all_results)
-
-R0.M <- rowMeans(all_results_mat)
-
-
-# save ------------------------------------------------------------------------
+TS2 <- readRDS(file.path("output", "trait_R0_relationships", TS_file_name))
 
 
-write_out_rds(R0.M, dir_save, paste0(var, "_", covar, "_fluctuating_T.rds"))
+# pre processing --------------------------------------------------------------
+
+
+no_data <- nrow(foi_data)
+n <- dim(a_samps)[1]
+thinned <- seq(1, n, by = 5) 
+lthin <- length(thinned)
+
+  
+# submit all jobs ------------------------------------------------------------- 
+
+
+if (CLUSTER) {
+  
+  annual_R0_all_data_points <- queuer::qlapply(
+    seq_len(no_data),
+    calculate_annual_traits_R0,
+    obj,
+    lthin,  
+    TS2, 
+    thinned, 
+    a_samps, 
+    PDR_samps, 
+    MDR_samps, 
+    e2a_samps, 
+    b_samps, 
+    c_samps, 
+    lf_samps, 
+    EFD_samps)
+  
+} else {
+  
+  annual_R0_all_data_points <- loop(seq_len(no_data), 
+                                    calculate_annual_traits_R0,
+                                    lthin,  
+                                    TS2, 
+                                    thinned, 
+                                    a_samps, 
+                                    PDR_samps, 
+                                    MDR_samps, 
+                                    e2a_samps, 
+                                    b_samps, 
+                                    c_samps, 
+                                    lf_samps, 
+                                    EFD_samps,
+                                    parallel = TRUE)
+  
+}

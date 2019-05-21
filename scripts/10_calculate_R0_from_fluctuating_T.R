@@ -1,10 +1,24 @@
-# plot 
+# load results and save 
+
+options(didehpc.cluster = "fi--didemrchnb")
+
+CLUSTER <- TRUE
+
+my_resources <- c(
+  file.path("R", "Mordecai_et_al_2017_code", "temp_functions_all.R"),
+  file.path("R", "R0_function.R"),
+  file.path("R", "calculate_annual_traits_R0_FT.R"),
+  file.path("R", "utility_functions.R"))
+
+context::context_log_start()
+ctx <- context::context_save(path = "context",
+                             sources = my_resources)
 
 
 # define parameters -----------------------------------------------------------
 
 
-dir_save <- file.path("figures", "trait_R0_relationships")
+dir_save <- file.path("output", "trait_R0_relationships")
 
 covariates <- c("NightTemp_const_term", "DayTemp_const_term")
 
@@ -22,50 +36,39 @@ covar <- covariates[1]
 
 foi_data <- read.csv(file.path("output", "extracted_covariates.csv"))
 
-R0.M <- readRDS(file.path("output", "trait_R0_relationships", paste0(var, "_", covar, "_fluctuating_T.rds")))
+
+# are you using the cluster? --------------------------------------------------  
+
+
+if (CLUSTER) {
   
-
-# pre processing --------------------------------------------------------------
-
-
-foi_data$pred_R0_1 <- R0.M
-
-x_range <- pretty(foi_data[, "R0_1"])
-y_range <- pretty(foi_data[, var])
+  obj <- didehpc::queue_didehpc(ctx)
   
-lm <- lm(as.formula(paste0(var, "~ R0_1 - 1")), data = foi_data)
-r_sq <- round(summary(lm)$r.squared, 3)
+} else {
+  
+  context::context_load(ctx)
+  context::parallel_cluster_start(8, ctx)
+  
+}
 
 
-# make plots ------------------------------------------------------------------
+# get the results -------------------------------------------------------------
 
 
-dir.create(dir_save, FALSE, TRUE)
+all_bundles <- obj$task_bundle_info()
 
-png(file.path(dir_save, sprintf("obs_vs_%s_%s%s", var, covar, "_fluctuating_T.png")), 
-    width = 9, 
-    height = 8, 
-    units = "cm",
-    pointsize = 12,
-    res = 200)
+id <- all_bundles[nrow(all_bundles), "name"]
 
-par(mar = c(4, 4, 2, 1), oma = c(0, 0, 0, 0), xaxs = "i", yaxs = "i")
+task_obj <- obj$task_bundle_get(id)
 
-plot(foi_data[, "R0_1"], 
-     foi_data[, var], 
-     xlim = c(0, max(x_range)),
-     ylim = c(0, max(y_range)),
-     xlab = "Observations", 
-     ylab = "Predictions", 
-     pch = 19, 
-     cex = 0.5, 
-     axes = FALSE)
+all_results <- task_obj$results()
 
-title(covar, cex.main = 1)
-axis(side = 1, at = x_range)
-axis(side = 2, at = y_range, las = 2)
+all_results_mat <- do.call("rbind", all_results)
 
-abline(reg = lm, col = "red", lwd = 2)
-text(10, 6, labels = bquote(R^2 == .(r_sq)), col = "red", lwd = 2)
+R0.M <- rowMeans(all_results_mat)
 
-dev.off()
+
+# save ------------------------------------------------------------------------
+
+
+write_out_rds(R0.M, dir_save, paste0(var, "_", covar, "_fluctuating_T.rds"))
