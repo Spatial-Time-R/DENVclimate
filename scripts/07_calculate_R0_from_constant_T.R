@@ -5,10 +5,8 @@
 in_path <- file.path("output", "termal_response_fits", "informative")
 
 covariates <- c("DayTemp_const_term", "NightTemp_const_term")
-responses <- c("R0_1", "pred_R0_1")
 
-covar <- covariates[2]
-var <- responses[2]
+response <- "pred_R0_1"
 
 dir_save <- file.path("figures", "trait_R0_relationships")
 
@@ -71,20 +69,32 @@ foi_data$pred_R0_1 <- R0.M
 # make plots ------------------------------------------------------------------
 
 
-dir.create(dir_save, FALSE, TRUE)
+for (i in 1:seq_along(covariates)){
 
-png(file.path(dir_save, paste0(var, "_", covar,".png")),
-    width = 8,
-    height = 8,
-    units = "cm",
-    pointsize = 12,
-    res = 200)
+  covar <- covariates[2]
 
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0))
+  dir.create(dir_save, FALSE, TRUE)
 
-plot(foi_data[, covar], foi_data[, var], xlab = covar, ylab = var, pch = 19, cex = 0.5)
-j <- order(foi_data[, covar])
-# l_1 <- loess(as.formula(paste0(var, "~", covar)), data = foi_data)
-# lines(foi_data[, covar][j], l_1$fitted[j], col = "red", lwd = 3)
+  png(file.path(dir_save, paste0(response, "_", covar,".png")),
+      width = 8,
+      height = 8,
+      units = "cm",
+      pointsize = 12,
+      res = 200)
 
-dev.off()
+  par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0))
+
+  plot(foi_data[, covar],
+       foi_data[, response],
+       xlab = covar,
+       ylab = var,
+       pch = 19,
+       cex = 0.5)
+
+  # j <- order(foi_data[, covar])
+  # l_1 <- loess(as.formula(paste0(var, "~", covar)), data = foi_data)
+  # lines(foi_data[, covar][j], l_1$fitted[j], col = "red", lwd = 3)
+
+  dev.off()
+
+}
