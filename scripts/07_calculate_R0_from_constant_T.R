@@ -1,0 +1,90 @@
+
+# define parameters -----------------------------------------------------------
+
+
+in_path <- file.path("output", "termal_response_fits", "informative")
+
+covariates <- c("DayTemp_const_term", "NightTemp_const_term")
+responses <- c("R0_1", "pred_R0_1")
+
+covar <- covariates[2]
+var <- responses[2]
+
+dir_save <- file.path("figures", "trait_R0_relationships")
+
+
+# load data -------------------------------------------------------------------
+
+
+a_samps <- readRDS(file.path(in_path, "a_samps.rds"))
+b_samps <- readRDS(file.path(in_path, "b_samps.rds"))
+c_samps <- readRDS(file.path(in_path, "c_samps.rds"))
+MDR_samps <- readRDS(file.path(in_path, "MDR_samps.rds"))
+EFD_samps <- readRDS(file.path(in_path, "EFD_samps.rds"))
+e2a_samps <- readRDS(file.path(in_path, "e2a_samps.rds"))
+PDR_samps <- readRDS(file.path(in_path, "PDR_samps.rds"))
+lf_samps <- readRDS(file.path(in_path, "lf_DENV_samps.rds"))
+
+foi_data <- readRDS(file.path("output", "extracted_covariates.rds"))
+
+
+# calculate R0 with constant temp ---------------------------------------------
+
+
+temp <- foi_data[, covar]
+
+t <- length(temp)
+
+# Length of samples, assuming they're all the same length
+n <- dim(a_samps)[1]
+thinned <- seq(1, n, by = 5)
+lthin <- length(thinned)
+
+### Calculate R0 and each trait across the thinned posterior samples
+R0 <- matrix(NA, t, lthin)
+a <- b <- c <- PDR <- MDR <- EFD <- e2a <- lf <- matrix(NA, t, lthin)
+
+for (j in seq_len(lthin)) {
+
+  # if(j %% 50 == 0) cat("iteration =", j, "\n")
+
+  # calculate parameter trajectories
+  i <- thinned[j]
+  a[, j] <- briere(temp, a_samps[i,3], a_samps[i,2], a_samps[i,1])
+  PDR[, j] <- briere(temp, PDR_samps[i,3], PDR_samps[i,2], PDR_samps[i,1])
+  MDR[, j] <- briere(temp, MDR_samps[i,3], MDR_samps[i,2], MDR_samps[i,1])
+  EFD[, j] <- briere(temp, EFD_samps[i,3], EFD_samps[i,2], EFD_samps[i,1])
+  e2a[, j] <- quad.2.trunc(temp, e2a_samps[i,1], e2a_samps[i,2], e2a_samps[i,3])
+  b[, j] <- briere.trunc(temp, b_samps[i,3], b_samps[i,2], b_samps[i,1])
+  c[, j] <- briere.trunc(temp, c_samps[i,3], c_samps[i,2], c_samps[i,1])
+  lf[, j] <- quad.2(temp, lf_samps[i,1], lf_samps[i,2], lf_samps[i,3])
+
+  # Calculate R0 equation
+  R0[, j] <- myR0(a[, j], b[, j], c[, j], PDR[, j], MDR[, j], EFD[, j], e2a[, j], lf[, j])
+
+}
+
+R0.M <- rowMeans(R0)
+foi_data$pred_R0_1 <- R0.M
+
+
+# make plots ------------------------------------------------------------------
+
+
+dir.create(dir_save, FALSE, TRUE)
+
+png(file.path(dir_save, paste0(var, "_", covar,".png")),
+    width = 8,
+    height = 8,
+    units = "cm",
+    pointsize = 12,
+    res = 200)
+
+par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0))
+
+plot(foi_data[, covar], foi_data[, var], xlab = covar, ylab = var, pch = 19, cex = 0.5)
+j <- order(foi_data[, covar])
+# l_1 <- loess(as.formula(paste0(var, "~", covar)), data = foi_data)
+# lines(foi_data[, covar][j], l_1$fitted[j], col = "red", lwd = 3)
+
+dev.off()
