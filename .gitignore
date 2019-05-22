@@ -2,6 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+doc/
 data/
 output/
 figures/
+BM/
