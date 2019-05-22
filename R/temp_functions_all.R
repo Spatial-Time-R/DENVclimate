@@ -1,8 +1,18 @@
-# temp_functions_all.R
-AIC.c<-function(myfit){##, ndata){
+#------------------------------------------------------------------------------
+#' AIC.c
+#'
+#' \code{AIC.c} calculates entomological traits for each
+#' day of the year.
+#'
+#' @param myfit
+
+#' @export
+
+
+AIC.c <- function(myfit){##, ndata){
   k<-(length(coef(myfit))+1)
   lLfit<-logLik(myfit)
-  
+
   n<-attr(lLfit, "nobs")
   cort<-2*k*(k+1)/(n-k-1)
 
@@ -12,7 +22,21 @@ AIC.c<-function(myfit){##, ndata){
 
 }
 
-linear<-function(T, inter, slope){
+
+#------------------------------------------------------------------------------
+#' linear
+#'
+#' \code{linear} calculates entomological traits for each
+#' day of the year.
+#'
+#' @param T
+#' @param inter
+#' @param slope
+
+#' @export
+
+
+linear <- function(T, inter, slope){
   x = inter+slope*T
   x[which(x<0)] <- 0
   x
