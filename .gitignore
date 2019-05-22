@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.Rsave
 doc/
 data/
 output/
