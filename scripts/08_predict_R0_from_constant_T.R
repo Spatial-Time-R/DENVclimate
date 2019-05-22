@@ -29,49 +29,49 @@ foi_data <- readRDS(file.path("output", "extracted_covariates.rds"))
 # calculate R0 with constant temp ---------------------------------------------
 
 
-temp <- foi_data[, covar]
-
-t <- length(temp)
-
-# Length of samples, assuming they're all the same length
-n <- dim(a_samps)[1]
-thinned <- seq(1, n, by = 5)
-lthin <- length(thinned)
-
-### Calculate R0 and each trait across the thinned posterior samples
-R0 <- matrix(NA, t, lthin)
-a <- b <- c <- PDR <- MDR <- EFD <- e2a <- lf <- matrix(NA, t, lthin)
-
-for (j in seq_len(lthin)) {
-
-  # if(j %% 50 == 0) cat("iteration =", j, "\n")
-
-  # calculate parameter trajectories
-  i <- thinned[j]
-  a[, j] <- briere(temp, a_samps[i,3], a_samps[i,2], a_samps[i,1])
-  PDR[, j] <- briere(temp, PDR_samps[i,3], PDR_samps[i,2], PDR_samps[i,1])
-  MDR[, j] <- briere(temp, MDR_samps[i,3], MDR_samps[i,2], MDR_samps[i,1])
-  EFD[, j] <- briere(temp, EFD_samps[i,3], EFD_samps[i,2], EFD_samps[i,1])
-  e2a[, j] <- quad.2.trunc(temp, e2a_samps[i,1], e2a_samps[i,2], e2a_samps[i,3])
-  b[, j] <- briere.trunc(temp, b_samps[i,3], b_samps[i,2], b_samps[i,1])
-  c[, j] <- briere.trunc(temp, c_samps[i,3], c_samps[i,2], c_samps[i,1])
-  lf[, j] <- quad.2(temp, lf_samps[i,1], lf_samps[i,2], lf_samps[i,3])
-
-  # Calculate R0 equation
-  R0[, j] <- myR0(a[, j], b[, j], c[, j], PDR[, j], MDR[, j], EFD[, j], e2a[, j], lf[, j])
-
-}
-
-R0.M <- rowMeans(R0)
-foi_data$pred_R0_1 <- R0.M
-
-
-# make plots ------------------------------------------------------------------
-
-
-for (i in 1:seq_along(covariates)){
+for (i in seq_along(covariates)){
 
   covar <- covariates[2]
+
+  temp <- foi_data[, covar]
+
+  t <- length(temp)
+
+  # Length of samples, assuming they're all the same length
+  n <- dim(a_samps)[1]
+  thinned <- seq(1, n, by = 5)
+  lthin <- length(thinned)
+
+  ### Calculate R0 and each trait across the thinned posterior samples
+  R0 <- matrix(NA, t, lthin)
+  a <- b <- c <- PDR <- MDR <- EFD <- e2a <- lf <- matrix(NA, t, lthin)
+
+  for (j in seq_len(lthin)) {
+
+    # if(j %% 50 == 0) cat("iteration =", j, "\n")
+
+    # calculate parameter trajectories
+    i <- thinned[j]
+    a[, j] <- briere(temp, a_samps[i,3], a_samps[i,2], a_samps[i,1])
+    PDR[, j] <- briere(temp, PDR_samps[i,3], PDR_samps[i,2], PDR_samps[i,1])
+    MDR[, j] <- briere(temp, MDR_samps[i,3], MDR_samps[i,2], MDR_samps[i,1])
+    EFD[, j] <- briere(temp, EFD_samps[i,3], EFD_samps[i,2], EFD_samps[i,1])
+    e2a[, j] <- quad.2.trunc(temp, e2a_samps[i,1], e2a_samps[i,2], e2a_samps[i,3])
+    b[, j] <- briere.trunc(temp, b_samps[i,3], b_samps[i,2], b_samps[i,1])
+    c[, j] <- briere.trunc(temp, c_samps[i,3], c_samps[i,2], c_samps[i,1])
+    lf[, j] <- quad.2(temp, lf_samps[i,1], lf_samps[i,2], lf_samps[i,3])
+
+    # Calculate R0 equation
+    R0[, j] <- myR0(a[, j], b[, j], c[, j], PDR[, j], MDR[, j], EFD[, j], e2a[, j], lf[, j])
+
+  }
+
+  R0.M <- rowMeans(R0)
+  foi_data$pred_R0_1 <- R0.M
+
+
+  # make plots ------------------------------------------------------------------
+
 
   dir.create(dir_save, FALSE, TRUE)
 
@@ -87,13 +87,9 @@ for (i in 1:seq_along(covariates)){
   plot(foi_data[, covar],
        foi_data[, response],
        xlab = covar,
-       ylab = var,
+       ylab = response,
        pch = 19,
        cex = 0.5)
-
-  # j <- order(foi_data[, covar])
-  # l_1 <- loess(as.formula(paste0(var, "~", covar)), data = foi_data)
-  # lines(foi_data[, covar][j], l_1$fitted[j], col = "red", lwd = 3)
 
   dev.off()
 
