@@ -16,22 +16,6 @@ FT_var_names <- c("NightTemp", "DayTemp")
 
 y_lab_tags <- c("Nocturnal", "Diurnal")
 
-i <- 2
-
-
-# define variables ------------------------------------------------------------
-
-
-FT_var_name <- FT_var_names[i]
-
-y_lab_tag <- y_lab_tags[i]
-
-const_term_var_name <- paste0(FT_var_name, "_const_term")
-Re0_var_name <- paste0(FT_var_name, "_Re0")
-Im0_var_name <- paste0(FT_var_name, "_Im0")
-Re1_var_name <- paste0(FT_var_name, "_Re1")
-Im1_var_name <- paste0(FT_var_name, "_Im1")
-
 
 # load data -------------------------------------------------------------------
 
@@ -39,27 +23,46 @@ Im1_var_name <- paste0(FT_var_name, "_Im1")
 foi_data <- readRDS(file.path("output", "extracted_covariates.rds"))
 
 
-# reconstructing time serie from FT terms -------------------------------------
+
+# define variables ------------------------------------------------------------
 
 
 no_data <- nrow(foi_data)
 
-TS0 <- matrix(foi_data[, const_term_var_name], nrow = no_data, ncol = length(timepoints))
 
-TS1 <- TS0 + (
-  outer(foi_data[, Re0_var_name], cos(2 * pi * timepoints * 1)) +
-  outer(foi_data[, Im0_var_name], sin(2 * pi * timepoints * 1))
-)
-
-TS2 <- TS1 + (
-  outer(foi_data[, Re1_var_name], cos(2 * pi * timepoints * 2)) +
-  outer(foi_data[, Im1_var_name], sin(2 * pi * timepoints * 2))
-)
-
-write_out_rds(TS2, tab_dir_save, paste0("TS2_", FT_var_name, ".rds"))
+# reconstructing time serie from FT terms -------------------------------------
 
 
-# plotting at selected location -----------------------------------------------
+for (i in seq_along(FT_var_names)){
+
+  FT_var_name <- FT_var_names[i]
+
+  y_lab_tag <- y_lab_tags[i]
+
+  const_term_var_name <- paste0(FT_var_name, "_const_term")
+  Re0_var_name <- paste0(FT_var_name, "_Re0")
+  Im0_var_name <- paste0(FT_var_name, "_Im0")
+  Re1_var_name <- paste0(FT_var_name, "_Re1")
+  Im1_var_name <- paste0(FT_var_name, "_Im1")
+
+  TS0 <- matrix(foi_data[, const_term_var_name], nrow = no_data, ncol = length(timepoints))
+
+  TS1 <- TS0 + (
+    outer(foi_data[, Re0_var_name], cos(2 * pi * timepoints * 1)) +
+      outer(foi_data[, Im0_var_name], sin(2 * pi * timepoints * 1))
+  )
+
+  TS2 <- TS1 + (
+    outer(foi_data[, Re1_var_name], cos(2 * pi * timepoints * 2)) +
+      outer(foi_data[, Im1_var_name], sin(2 * pi * timepoints * 2))
+  )
+
+  write_out_rds(TS2, tab_dir_save, paste0("TS2_", FT_var_name, ".rds"))
+
+}
+
+
+# plotting at one selected location -------------------------------------------
 
 
 j <- 1
