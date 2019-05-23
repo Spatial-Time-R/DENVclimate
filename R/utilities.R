@@ -1,16 +1,11 @@
-# -----------------------------------------------------------------------------
-#
-# Utility functions
-#
-#------------------------------------------------------------------------------
+
 
 #------------------------------------------------------------------------------
 #' loop
 #'
-#' \code{loop} calculates entomological traits for each
-#' day of the year.
+#' \code{loop} wrapper for \code{lapply}.
 #'
-#' @param parallel
+#' @param parallel If TRUE it uses \code{parLapply}.
 
 #' @export
 
@@ -27,10 +22,9 @@ loop <- function(..., parallel) {
 #------------------------------------------------------------------------------
 #' loop_simplify
 #'
-#' \code{loop_simplify} calculates entomological traits for each
-#' day of the year.
+#' \code{loop_simplify} simplify the output of \code{loop}.
 #'
-#' @param what
+#' @param what the return value from \code{loop}.
 
 #' @export
 
@@ -43,12 +37,11 @@ loop_simplify <- function(..., what) {
 #------------------------------------------------------------------------------
 #' write_out_rds
 #'
-#' \code{write_out_rds} calculates entomological traits for each
-#' day of the year.
+#' \code{write_out_rds} saves an rds file.
 #'
-#' @param dat
-#' @param my_path
-#' @param file_name
+#' @param dat the dataframe to save.
+#' @param my_path the output directory.
+#' @param file_name the output file name.
 
 #' @export
 
@@ -61,6 +54,19 @@ write_out_rds <- function(dat, my_path, file_name) {
 
 }
 
+
+#------------------------------------------------------------------------------
+#' write_out_csv
+#'
+#' \code{write_out_csv} saves a csv file.
+#'
+#' @param dat the dataframe to save.
+#' @param my_path the output directory.
+#' @param file_name the output file name.
+
+#' @export
+
+
 write_out_csv <- function(dat, my_path, file_name) {
 
   dir.create(my_path, FALSE, TRUE)
@@ -72,6 +78,18 @@ write_out_csv <- function(dat, my_path, file_name) {
     sep = ",")
 
 }
+
+
+#------------------------------------------------------------------------------
+#' df_to_list
+#'
+#' \code{df_to_list} converts a dataframe into a list.
+#'
+#' @param x the dataframe to convert.
+#' @param use_names if TRUE it saves the df column names into each list component.
+
+#' @export
+
 
 df_to_list <- function (x, use_names) {
   keep <- c("names", "class", "row.names")
@@ -87,26 +105,8 @@ df_to_list <- function (x, use_names) {
   ret
 }
 
-lm_eqn <- function(df, y, x){
 
-  # fit linear model - no intercept
-  frmla <- as.formula(paste0(y, " ~ ", x, " - 1"))
-  m <- lm(frmla, df)
-
-  #browser()
-
-  # calculates R2
-  r2 <- 1 - crossprod(residuals(m)) / crossprod(df[,y] - mean(df[,y]))
-  #r2 <- summary(m)$r.squared # R
-
-  eq <- substitute(italic(y) == b %.% italic(x)*","~~italic(R)^2~"="~r2,
-                   list(b = format(coef(m), digits = 4),
-                        r2 = format(r2, digits = 4)))
-  as.character(as.expression(eq))
-}
-
-
-#------------------------------------------------
+#------------------------------------------------------------------------------
 #' save_plot
 #'
 #' \code{save_plot} save a png file of a plot
