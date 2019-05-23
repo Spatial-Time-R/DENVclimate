@@ -13,7 +13,7 @@ in_path <- file.path("output", "termal_response_fits", "priors")
 
 out_path <- file.path("output", "termal_response_fits", "informative")
 
-jags_quad_neg_informative_path <- system.file("extdata", "jags-quad-neg-informative.bug")
+jags_quad_neg_informative_path <- system.file("extdata", "jags-quad-neg-informative.bug", package = "DENVclimate")
 
 
 # load data -------------------------------------------------------------------
@@ -49,7 +49,7 @@ hypers <- gamma.fits.lf * 0.01
 ## Set up the jags code, which contains the specifics of the quadratic model with the
 ## default priors. As well as a few different jags models that contain different things.
 
-jags <- jags.model(jags_quad_neg_informative_path,
+jags <- rjags::jags.model(jags_quad_neg_informative_path,
                    data = list('Y' = data$trait, 'T' = data$T, 'N'=length(data$T), 'hypers' = hypers),
                    n.chains = n.chains,
                    inits=list(T0=5, Tm=33, n.qd=0.005), n.adapt = n.adapt)
@@ -58,7 +58,7 @@ jags <- jags.model(jags_quad_neg_informative_path,
 # them in the coda format, which we use for visualization and
 # analysis
 
-coda.samps <- coda.samples(jags, c('T0','Tm', 'qd', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('T0','Tm', 'qd', 'sigma'), n.samps)
 
 # These plots are useful to asses model convergence and general diagnostic information.
 # plot(coda.samps, ask = TRUE)

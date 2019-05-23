@@ -14,8 +14,8 @@ in_path <- file.path("output", "termal_response_fits", "priors")
 
 out_path <- file.path("output", "termal_response_fits", "informative")
 
-jags_briere_informative_path <- system.file("extdata", "jags-briere-informative.bug")
-jags_quad_neg_informative_path <- system.file("extdata", "jags-quad-neg-informative.bug")
+jags_briere_informative_path <- system.file("extdata", "jags-briere-informative.bug", package = "DENVclimate")
+jags_quad_neg_informative_path <- system.file("extdata", "jags-quad-neg-informative.bug", package = "DENVclimate")
 
 
 # load data -------------------------------------------------------------------
@@ -45,16 +45,16 @@ data <- data.all[which(data.all$trait.name == "GCR"), ]
 
 hypers <- gamma.fits.a * 0.1
 
-jags <- jags.model(jags_briere_informative_path,
-                   data = list('Y' = data$trait,
-                               'T' = data$T,
-                               'N'= length(data$T),
-                               'hypers' = hypers),
-                   n.chains = n.chains,
-                   inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_informative_path,
+                          data = list('Y' = data$trait,
+                                      'T' = data$T,
+                                      'N'= length(data$T),
+                                      'hypers' = hypers),
+                          n.chains = n.chains,
+                          inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
-coda.samps <- coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
 
 # plot(coda.samps, ask=TRUE)
 
@@ -99,16 +99,16 @@ data <- data.all[which(data.all$trait.name == "EFD"), ]
 
 hypers <- gamma.fits.EFD * 0.1
 
-jags <- jags.model(jags_briere_informative_path,
-                   data = list('Y' = data$trait,
-                               'T' = data$T,
-                               'N'= length(data$T),
-                               'hypers'=hypers),
-                   n.chains = n.chains,
-                   inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_informative_path,
+                          data = list('Y' = data$trait,
+                                      'T' = data$T,
+                                      'N'= length(data$T),
+                                      'hypers'=hypers),
+                          n.chains = n.chains,
+                          inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
-coda.samps <- coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
 
 # plot(coda.samps)
 
@@ -161,16 +161,16 @@ data <- subset(data, ref!="Lambrects_et_al_2011_PNAS")
 
 hypers <- gamma.fits.b * 0.5
 
-jags <- jags.model(jags_briere_informative_path,
-                   data = list('Y' = data$trait,
-                               'T' = data$T,
-                               'N'= length(data$T),
-                               'hypers' = hypers),
-                   n.chains = n.chains,
-                   inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_informative_path,
+                          data = list('Y' = data$trait,
+                                      'T' = data$T,
+                                      'N'= length(data$T),
+                                      'hypers' = hypers),
+                          n.chains = n.chains,
+                          inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
-coda.samps <- coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
 
 # plot(coda.samps)
 
@@ -222,16 +222,16 @@ data <- subset(data, ref!="Alto&Bettinardi_2013_AJTMH")
 
 hypers <- gamma.fits.c * 0.5
 
-jags <- jags.model(jags_briere_informative_path,
-                   data = list('Y' = data$trait,
-                               'T' = data$T,
-                               'N'= length(data$T),
-                               'hypers' = hypers),
-                   n.chains = n.chains,
-                   inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_informative_path,
+                          data = list('Y' = data$trait,
+                                      'T' = data$T,
+                                      'N'= length(data$T),
+                                      'hypers' = hypers),
+                          n.chains = n.chains,
+                          inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
-coda.samps <- coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
 
 # plot(coda.samps)
 
@@ -275,16 +275,16 @@ data <- data.all[which(data.all$trait.name == "MDR"), ]
 
 hypers <- gamma.fits.MDR * 0.1
 
-jags <- jags.model(jags_briere_informative_path,
-                   data = list('Y' = data$trait,
-                               'T' = data$T,
-                               'N' = length(data$T),
-                               'hypers' = hypers),
-                   n.chains = n.chains,
-                   inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_informative_path,
+                          data = list('Y' = data$trait,
+                                      'T' = data$T,
+                                      'N' = length(data$T),
+                                      'hypers' = hypers),
+                          n.chains = n.chains,
+                          inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
-coda.samps <- coda.samples(jags, c('c','Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c','Tm', 'T0', 'sigma'), n.samps)
 
 # plot(coda.samps)
 
@@ -327,16 +327,16 @@ data <- data.all[which(data.all$trait.name == "pEA"), ]
 
 hypers <- gamma.fits.e2a * 0.1
 
-jags <- jags.model(jags_quad_neg_informative_path,
-                   data = list('Y' = data$trait,
-                               'T' = data$T,
-                               'N'=length(data$T),
-                               'hypers' = hypers),
-                   n.chains = n.chains,
-                   inits = list(T0 = 5, Tm = 33, n.qd = 0.005),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_quad_neg_informative_path,
+                          data = list('Y' = data$trait,
+                                      'T' = data$T,
+                                      'N'=length(data$T),
+                                      'hypers' = hypers),
+                          n.chains = n.chains,
+                          inits = list(T0 = 5, Tm = 33, n.qd = 0.005),
+                          n.adapt = n.adapt)
 
-coda.samps <- coda.samples(jags, c('T0','Tm', 'qd', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('T0','Tm', 'qd', 'sigma'), n.samps)
 
 # plot(coda.samps)
 
@@ -388,16 +388,16 @@ data <- rbind(data.days, data.1mu)
 
 hypers <- gamma.fits.lf * 0.01
 
-jags <- jags.model(jags_quad_neg_informative_path,
-                   data = list('Y' = data$trait,
-                               'T' = data$T,
-                               'N'=length(data$T),
-                               'hypers' = hypers),
-                   n.chains = n.chains,
-                   inits = list(T0 = 5, Tm = 33, n.qd = 0.005),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_quad_neg_informative_path,
+                          data = list('Y' = data$trait,
+                                      'T' = data$T,
+                                      'N'=length(data$T),
+                                      'hypers' = hypers),
+                          n.chains = n.chains,
+                          inits = list(T0 = 5, Tm = 33, n.qd = 0.005),
+                          n.adapt = n.adapt)
 
-coda.samps <- coda.samples(jags, c('T0','Tm', 'qd', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('T0','Tm', 'qd', 'sigma'), n.samps)
 
 # plot(coda.samps, ask = TRUE)
 
@@ -449,16 +449,16 @@ data <- rbind(data1, data2)
 
 hypers <- gamma.fits.PDR * 0.5
 
-jags <- jags.model(jags_briere_informative_path,
-                   data = list('Y' = data$trait,
-                               'T' = data$T,
-                               'N' = length(data$T),
-                               'hypers' = hypers),
-                   n.chains = n.chains,
-                   inits = list(Tm = 38, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_informative_path,
+                          data = list('Y' = data$trait,
+                                      'T' = data$T,
+                                      'N' = length(data$T),
+                                      'hypers' = hypers),
+                          n.chains = n.chains,
+                          inits = list(Tm = 38, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
-coda.samps <- coda.samples(jags, c('c','Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c','Tm', 'T0', 'sigma'), n.samps)
 
 # plot(coda.samps)
 
@@ -582,26 +582,10 @@ all_fits$trait.name <- factor(all_fits$trait.name, levels = ordered_selected_tra
 # plot and save ---------------------------------------------------------------
 
 
-dir.create(file.path("figures"), FALSE, TRUE)
-
-png(file.path("figures", "all_thermal_responses_inf_priors.png"),
-    width = 23,
-    height = 15,
-    units = "cm",
-    pointsize = 12,
-    res = 300)
-
-all_thermal_responses <- ggplot() +
-  geom_point(aes(x = T, y = trait, colour = ref), data = my_data) +
-  geom_line(aes(x = temp, y = mean), data = all_fits) +
-  geom_ribbon(aes(x = temp, ymin = q1, ymax = q2), data = all_fits, alpha = 0.2) +
-  facet_wrap(~ trait.name, scales = "free_y") +
-  coord_cartesian(xlim = c(10, 40)) +
-  scale_x_continuous("temperature (C)", breaks = seq(10,40,5), labels = seq(10,40,5))
-
-print(all_thermal_responses)
-
-dev.off()
+plot_thermal_responses_all_data(my_data,
+                                all_fits,
+                                "figures",
+                                "all_thermal_responses_inf_priors")
 
 
 # get mean and se -------------------------------------------------------------
@@ -610,15 +594,19 @@ dev.off()
 
 my_data$T <- round(my_data$T)
 
-my_data_av <- my_data %>%
-  group_by(trait.name, T) %>%
-  summarise(m = mean(trait), sd = sd(trait), n = n())
+my_data_av <- mean_trait(my_data)
 
 my_data_av$se <- my_data_av$sd / sqrt(my_data_av$n)
 my_data_av[is.na(my_data_av$se), "se"] <- 0
 
 
 # plot and save ---------------------------------------------------------------
+
+
+plot_thermal_responses_mean_data(my_data_av,
+                                 all_fits,
+                                 "figures",
+                                 "all_thermal_responses_inf_priors_2")
 
 
 dir.create(file.path("figures"), FALSE, TRUE)

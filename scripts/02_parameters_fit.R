@@ -23,9 +23,9 @@ n.chains <- 5
 n.adapt <- 5000
 n.samps <- 5000
 
-jags_briere_path <- system.file("extdata", "jags-briere.bug")
-jags_quad_neg_path <- system.file("extdata", "jags-quad-neg.bug")
-jags_briere_PDR_prior_path <- system.file("extdata", "jags-briere-PDR-prior.bug")
+jags_briere_path <- system.file("extdata", "jags-briere.bug", package = "DENVclimate")
+jags_quad_neg_path <- system.file("extdata", "jags-quad-neg.bug", package = "DENVclimate")
+jags_briere_PDR_prior_path <- system.file("extdata", "jags-briere-PDR-prior.bug", package = "DENVclimate")
 
 out_path <- file.path("output", "termal_response_fits", "priors")
 
@@ -52,16 +52,16 @@ data <- aedes_aegypti_priors[ which(aedes_aegypti_priors$trait.name=="a"),]
 # specifics of the Briere model with the default priors, which is then used to create
 # an MCMC sample using the data.
 
-jags <- jags.model(jags_briere_path,
-                   data = list('Y' = data$trait, 'T' = data$T, 'N'= length(data$T)),
-                   n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_path,
+                          data = list('Y' = data$trait, 'T' = data$T, 'N'= length(data$T)),
+                          n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
 # The coda.samples() function takes n.samps new samples, and saves
 # them in the coda format, which we use for visualization and
 # analysis.
 
-coda.samps <- coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
 
 # These plots are useful to asses model convergence and general diagnosticl information.
 
@@ -92,7 +92,7 @@ q1<-temp.sim.quants(out1$fits, length(Temps))
 # add.sim.lines(Temps, sim.data=out1$fits, q=q1, mycol=8)
 
 # Use moment matching to fit a gamma distribution to each parameter estimate
-gamma.fits.a = apply(a.samps, 2, function(df) fitdistr(df, "gamma")$estimate)
+gamma.fits.a = apply(a.samps, 2, function(df) MASS::fitdistr(df, "gamma")$estimate)
 # warnings messages are OK
 
 # Plot an example to show that it's working
@@ -122,16 +122,16 @@ data <- aedes_aegypti_priors[which(aedes_aegypti_priors$trait.name=="EFD"),]
 data = subset(data, ref=="Joshi_1996")
 # plot(trait ~ T, data = data)
 
-jags <- jags.model(jags_briere_path,
-                   data = list('Y' = data$trait, 'T' = data$T, 'N'= length(data$T)),
-                   n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_path,
+                          data = list('Y' = data$trait, 'T' = data$T, 'N'= length(data$T)),
+                          n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
 # The coda.samples() function takes n.samps new samples, and saves
 # them in the coda format, which we use for visualization and
 # analysis.
 
-coda.samps <- coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
 
 # These plots are useful to asses model convergence and general diagnosticl information.
 
@@ -163,7 +163,7 @@ q1<-temp.sim.quants(out1$fits, length(Temps))
 # add.sim.lines(Temps, sim.data=out1$fits, q=q1, mycol=8)
 
 # Fit a gamma distribution to each parameter
-gamma.fits.EFD = apply(EFD.samps, 2, function(df) fitdistr(df, "gamma")$estimate)
+gamma.fits.EFD = apply(EFD.samps, 2, function(df) MASS::fitdistr(df, "gamma")$estimate)
 
 
 
@@ -193,16 +193,16 @@ data$trait <- data$trait*(77.19048/max(data$trait))
 data = subset(data, ref=="Joshi_1996")
 # plot(trait ~ T, data = data)
 
-jags <- jags.model(jags_briere_path,
-                   data = list('Y' = data$trait, 'T' = data$T, 'N'= length(data$T)),
-                   n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_path,
+                          data = list('Y' = data$trait, 'T' = data$T, 'N'= length(data$T)),
+                          n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
 # The coda.samples() function takes n.samps new samples, and saves
 # them in the coda format, which we use for visualization and
 # analysis.
 
-coda.samps <- coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
 
 # These plots are useful to asses model convergence and general diagnosticl information.
 
@@ -234,7 +234,7 @@ q1<-temp.sim.quants(out1$fits, length(Temps))
 # add.sim.lines(Temps, sim.data=out1$fits, q=q1, mycol=8)
 
 # Fit a gamma distribution to each parameter
-gamma.fits.TFD = apply(TFD.samps, 2, function(df) fitdistr(df, "gamma")$estimate)
+gamma.fits.TFD = apply(TFD.samps, 2, function(df) MASS::fitdistr(df, "gamma")$estimate)
 
 
 
@@ -259,16 +259,16 @@ data = rbind(data1, data2)
 # Given the data the Briere fuction is chosen. Jag-briere.bug contains the specifics of
 # the Briere model with the default priors.
 
-jags <- jags.model(jags_briere_path,
-                   data = list('Y' = data$trait, 'T' = data$T, 'N' = length(data$T)),
-                   n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_path,
+                          data = list('Y' = data$trait, 'T' = data$T, 'N' = length(data$T)),
+                          n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
 # The coda.samples() function takes n.samps new samples, and saves
 # them in the coda format, which we use for visualization and
 # analysis.
 
-coda.samps <- coda.samples(jags, c('c','Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c','Tm', 'T0', 'sigma'), n.samps)
 
 # These plots are useful to asses model convergence and general diagnosticl information.
 
@@ -303,7 +303,7 @@ q1<-temp.sim.quants(out1$fits, length(Temps))
 # add.sim.lines(Temps, sim.data=out1$fits, q=q1, mycol=8)
 
 # Fit a gamma distribution to each parameter
-gamma.fits.MDR = apply(MDR.samps, 2, function(df) fitdistr(df, "gamma")$estimate)
+gamma.fits.MDR = apply(MDR.samps, 2, function(df) MASS::fitdistr(df, "gamma")$estimate)
 
 
 
@@ -325,16 +325,16 @@ data <- aedes_aegypti_priors[which(aedes_aegypti_priors$trait.name=="e2a"),]
 # Given the data the Negative Quadratic function is chosen. Jags-quad-neg.bug contains
 # the specifics of the Negative Quadratic model with the default priors.
 
-jags <- jags.model(jags_quad_neg_path,
-                   data = list('Y' = data$trait, 'T' = data$T, 'N'=length(data$T)),
-                   n.chains = n.chains,
-                   inits=list(T0=5, Tm=33, n.qd=0.005), n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_quad_neg_path,
+                          data = list('Y' = data$trait, 'T' = data$T, 'N'=length(data$T)),
+                          n.chains = n.chains,
+                          inits=list(T0=5, Tm=33, n.qd=0.005), n.adapt = n.adapt)
 
 # The coda.samples() function takes n.samps new samples, and saves
 # them in the coda format, which we use for visualization and
 # analysis
 
-coda.samps <- coda.samples(jags, c('T0','Tm', 'qd', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('T0','Tm', 'qd', 'sigma'), n.samps)
 
 # These plots are useful to asses model convergence and general diagnosticl information.
 # plot(coda.samps)
@@ -373,7 +373,7 @@ q1<-temp.sim.quants(out1$fits, length(Temps))
 # Fit a gamma distribution to each parameter
 e2a.samps.pos = e2a.samps[,c(1:4,6)]
 e2a.samps.pos$qd <- -e2a.samps.pos$qd
-gamma.fits.e2a = apply(e2a.samps.pos, 2, function(df) fitdistr(df, "gamma")$estimate)
+gamma.fits.e2a = apply(e2a.samps.pos, 2, function(df) MASS::fitdistr(df, "gamma")$estimate)
 
 
 
@@ -390,16 +390,16 @@ data <- aedes_aegypti_priors[which(aedes_aegypti_priors$trait.name=="1/mu"),]
 
 # plot(trait ~ T, data = data)
 
-jags <- jags.model(jags_quad_neg_path,
-                   data = list('Y' = data$trait, 'T' = data$T, 'N'=length(data$T)),
-                   n.chains = n.chains,
-                   inits=list(T0=5, Tm=33, n.qd=0.005), n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_quad_neg_path,
+                          data = list('Y' = data$trait, 'T' = data$T, 'N'=length(data$T)),
+                          n.chains = n.chains,
+                          inits=list(T0=5, Tm=33, n.qd=0.005), n.adapt = n.adapt)
 
 # The coda.samples() function takes n.samps new samples, and saves
 # them in the coda format, which we use for visualization and
 # analysis
 
-coda.samps <- coda.samples(jags, c('T0','Tm', 'qd', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('T0','Tm', 'qd', 'sigma'), n.samps)
 
 # These plots are useful to asses model convergence and general diagnosticl information.
 # plot(coda.samps)
@@ -437,7 +437,7 @@ q1<-temp.sim.quants(out1$fits, length(Temps))
 # Fit a gamma distribution to each parameter
 lf.samps.pos = lf.samps[,c(1:4,6)]
 lf.samps.pos$qd <- -lf.samps.pos$qd
-gamma.fits.lf = apply(lf.samps.pos, 2, function(df) fitdistr(df, "gamma")$estimate)
+gamma.fits.lf = apply(lf.samps.pos, 2, function(df) MASS::fitdistr(df, "gamma")$estimate)
 
 
 
@@ -457,16 +457,16 @@ data = subset(lambc, trait.name=="b")
 
 # plot(trait ~ T, data = data)
 
-jags <- jags.model(jags_briere_path,
-                   data = list('Y' = data$trait, 'T' = data$T, 'N'= length(data$T)),
-                   n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_path,
+                          data = list('Y' = data$trait, 'T' = data$T, 'N'= length(data$T)),
+                          n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
 # The coda.samples() function takes n.samps new samples, and saves
 # them in the coda format, which we use for visualization and
 # analysis.
 
-coda.samps <- coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
 
 # These plots are useful to asses model convergence and general diagnosticl information.
 
@@ -497,7 +497,7 @@ q1<-temp.sim.quants(out1$fits, length(Temps))
 # add.sim.lines(Temps, sim.data=out1$fits, q=q1, mycol=8)
 
 # Use moment matching to fit a gamma distribution to each parameter estimate
-gamma.fits.b = apply(b.samps, 2, function(df) fitdistr(df, "gamma")$estimate)
+gamma.fits.b = apply(b.samps, 2, function(df) MASS::fitdistr(df, "gamma")$estimate)
 
 
 # -----------------------------------------------------------------------------
@@ -511,16 +511,16 @@ data = subset(lambc, trait.name=="c")
 
 # plot(trait ~ T, data = data)
 
-jags <- jags.model(jags_briere_path,
-                   data = list('Y' = data$trait, 'T' = data$T, 'N'= length(data$T)),
-                   n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_path,
+                          data = list('Y' = data$trait, 'T' = data$T, 'N'= length(data$T)),
+                          n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
 # The coda.samples() function takes n.samps new samples, and saves
 # them in the coda format, which we use for visualization and
 # analysis.
 
-coda.samps <- coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c', 'Tm', 'T0', 'sigma'), n.samps)
 
 # These plots are useful to asses model convergence and general diagnosticl information.
 
@@ -553,7 +553,7 @@ q1<-temp.sim.quants(out1$fits, length(Temps))
 
 
 # Fit a gamma distribution to each parameter
-gamma.fits.c = apply(c.samps, 2, function(df) fitdistr(df, "gamma")$estimate)
+gamma.fits.c = apply(c.samps, 2, function(df) MASS::fitdistr(df, "gamma")$estimate)
 
 
 
@@ -579,16 +579,16 @@ data <- aa_EIP_priors
 # Given the data the Briere fuction is chosen. Jag-briere.bug contains the specifics of
 # the Briere model with the default priors.
 
-jags <- jags.model(jags_briere_PDR_prior_path,
-                   data = list('Y' = data$trait, 'T' = data$T, 'N' = length(data$T)),
-                   n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
-                   n.adapt = n.adapt)
+jags <- rjags::jags.model(jags_briere_PDR_prior_path,
+                          data = list('Y' = data$trait, 'T' = data$T, 'N' = length(data$T)),
+                          n.chains = n.chains, inits = list(Tm = 31, T0 = 5, c = 0.00007),
+                          n.adapt = n.adapt)
 
 # The coda.samples() function takes n.samps new samples, and saves
 # them in the coda format, which we use for visualization and
 # analysis.
 
-coda.samps <- coda.samples(jags, c('c','Tm', 'T0', 'sigma'), n.samps)
+coda.samps <- rjags::coda.samples(jags, c('c','Tm', 'T0', 'sigma'), n.samps)
 
 # These plots are useful to asses model convergence and general diagnosticl information.
 
@@ -623,7 +623,7 @@ q1<-temp.sim.quants(out1$fits, length(Temps))
 # add.sim.lines(Temps, sim.data=out1$fits, q=q1, mycol=8)
 
 # Fit a gamma distribution to each parameter
-gamma.fits.PDR = apply(PDR.samps, 2, function(df) fitdistr(df, "gamma")$estimate)
+gamma.fits.PDR = apply(PDR.samps, 2, function(df) MASS::fitdistr(df, "gamma")$estimate)
 
 
 # -----------------------------------------------------------------------------
