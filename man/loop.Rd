@@ -6,7 +6,9 @@
 \usage{
 loop(..., parallel)
 }
+\arguments{
+\item{parallel}{If TRUE it uses \code{parLapply}.}
+}
 \description{
-\code{loop} calculates entomological traits for each
-day of the year.
+\code{loop} wrapper for \code{lapply}.
 }

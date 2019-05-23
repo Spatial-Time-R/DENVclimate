@@ -6,7 +6,9 @@
 \usage{
 loop_simplify(..., what)
 }
+\arguments{
+\item{what}{the return value from \code{loop}.}
+}
 \description{
-\code{loop_simplify} calculates entomological traits for each
-day of the year.
+\code{loop_simplify} simplify the output of \code{loop}.
 }
