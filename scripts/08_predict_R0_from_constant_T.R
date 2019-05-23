@@ -23,7 +23,7 @@ e2a_samps <- readRDS(file.path(in_path, "e2a_samps.rds"))
 PDR_samps <- readRDS(file.path(in_path, "PDR_samps.rds"))
 lf_samps <- readRDS(file.path(in_path, "lf_DENV_samps.rds"))
 
-foi_data <- readRDS(file.path("output", "extracted_covariates.rds"))
+foi_covariates <- readRDS(file.path("output", "extracted_covariates.rds"))
 
 
 # calculate R0 with constant temp ---------------------------------------------
@@ -31,9 +31,9 @@ foi_data <- readRDS(file.path("output", "extracted_covariates.rds"))
 
 for (i in seq_along(covariates)){
 
-  covar <- covariates[2]
+  covar <- covariates[i]
 
-  temp <- foi_data[, covar]
+  temp <- foi_covariates[, covar]
 
   t <- length(temp)
 
@@ -67,7 +67,7 @@ for (i in seq_along(covariates)){
   }
 
   R0.M <- rowMeans(R0)
-  foi_data$pred_R0_1 <- R0.M
+  foi_covariates$pred_R0_1 <- R0.M
 
 
   # make plots ------------------------------------------------------------------
@@ -84,8 +84,8 @@ for (i in seq_along(covariates)){
 
   par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0))
 
-  plot(foi_data[, covar],
-       foi_data[, response],
+  plot(foi_covariates[, covar],
+       foi_covariates[, response],
        xlab = covar,
        ylab = response,
        pch = 19,
