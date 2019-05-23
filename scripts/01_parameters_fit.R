@@ -573,6 +573,7 @@ my_data_av[is.na(my_data_av$se), "se"] <- 0
 
 # plot and save ---------------------------------------------------------------
 
+
 plot_thermal_responses_mean_data(my_data_av,
                                  all_fits,
                                  "figures",
