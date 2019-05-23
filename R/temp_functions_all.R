@@ -1,14 +1,3 @@
-#------------------------------------------------------------------------------
-#' AIC.c
-#'
-#' \code{AIC.c} calculates entomological traits for each
-#' day of the year.
-#'
-#' @param myfit
-
-#' @export
-
-
 AIC.c <- function(myfit){##, ndata){
   k<-(length(coef(myfit))+1)
   lLfit<-logLik(myfit)
@@ -21,20 +10,6 @@ AIC.c <- function(myfit){##, ndata){
   return(AICc)
 
 }
-
-
-#------------------------------------------------------------------------------
-#' linear
-#'
-#' \code{linear} calculates entomological traits for each
-#' day of the year.
-#'
-#' @param T
-#' @param inter
-#' @param slope
-
-#' @export
-
 
 linear <- function(T, inter, slope){
   x = inter+slope*T
