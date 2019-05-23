@@ -30,19 +30,9 @@ out_name <- "extracted_covariates.rds"
 # load data -------------------------------------------------------------------
 
 
-foi_data <- read.csv(file.path("data",
-                               "foi",
-                               "All_FOI_estimates_and_predictors.csv"),
-                     stringsAsFactors = FALSE)
-
 pxl_data <- readRDS(file.path("data",
                               "predictors",
                               "env_vars_20km.rds"))
-
-predictor_rank <- read.csv(file.path("data",
-                                     "variable_selection",
-                                     "predictor_rank.csv"),
-                           stringsAsFactors = FALSE)
 
 
 # pre processing --------------------------------------------------------------
