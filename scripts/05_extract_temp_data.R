@@ -30,9 +30,7 @@ out_name <- "extracted_covariates.rds"
 # load data -------------------------------------------------------------------
 
 
-pxl_data <- readRDS(file.path("data",
-                              "predictors",
-                              "env_vars_20km.rds"))
+pxl_data <- readRDS(file.path("data-raw", "env_vars_20km.rds"))
 
 
 # pre processing --------------------------------------------------------------
@@ -42,7 +40,7 @@ number_of_predictors <- parameters$no_predictors
 
 my_predictors <- predictor_rank$name[1:number_of_predictors]
 
-pxl_data <- inner_join(pxl_data, foi_data[, c(grp_flds, "type")])
+pxl_data <- dplyr::inner_join(pxl_data, foi_data[, c(grp_flds, "type")])
 
 
 # fix serology new_weights ----------------------------------------------------
