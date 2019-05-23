@@ -3,8 +3,7 @@
 root <- file.path("Y:", "DENVclimate")
 
 paths_from <- list(
-  file.path("data",
-            "predictors",
+  file.path("data-raw",
             "env_vars_20km.rds"))
 
 for (i in seq_along(paths_from)){
