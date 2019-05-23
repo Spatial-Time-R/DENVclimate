@@ -5,7 +5,6 @@
 .Rsave
 *.rds
 doc/
-data/
 output/
 figures/
 BM/
