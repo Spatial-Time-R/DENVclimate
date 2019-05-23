@@ -133,3 +133,31 @@ save_plot <- function(plot_obj, out_pth, out_fl_nm, wdt, hgt){
   on.exit(dev.off())
 
 }
+
+
+#------------------------------------------------------------------------------
+#' basic_scatter_plot
+#'
+#' \code{basic_scatter_plot} save a png file of a plot
+#'
+#' @param df dataframe with the data to plot.
+#' @param x variable to plot on the x axis.
+#' @param y variable to plot on the y axis.
+#'
+#' @export
+
+
+basic_scatter_plot <- function(df, x, y){
+
+  par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0))
+
+  plot(df[, x],
+       df[, y],
+       xlab = x,
+       ylab = y,
+       pch = 19,
+       cex = 0.5)
+
+  p <- recordPlot()
+
+}
