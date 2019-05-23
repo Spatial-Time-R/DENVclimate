@@ -1,25 +1,3 @@
-#------------------------------------------------------------------------------
-#' model_param_list_create
-#'
-#' \code{calculate_annual_traits_R0} calculates entomological traits for each
-#' day of the year.
-#'
-#' @param i The data point
-#' @param lthin
-#' @param TS2
-#' @param thinned
-#' @param a_samps
-#' @param PDR_samps
-#' @param MDR_samps
-#' @param e2a_samps
-#' @param b_samps
-#' @param c_samps
-#' @param lf_samps
-#' @param EFD_samps
-
-#' @export
-
-
 calculate_annual_traits_R0 <- function(i,
                                        lthin,
                                        TS2,
