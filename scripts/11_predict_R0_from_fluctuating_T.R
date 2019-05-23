@@ -1,4 +1,4 @@
-# plot 
+# plot
 
 
 # define parameters -----------------------------------------------------------
@@ -11,61 +11,50 @@ covariates <- c("NightTemp_const_term", "DayTemp_const_term")
 var <- "pred_R0_1"
 
 
-# define variables ------------------------------------------------------------
+# start -----------------------------------------------------------------------
 
 
-covar <- covariates[1]
+for (i in seq_along(covariates)){
+
+  covar <- covariates[i]
 
 
-# load data -------------------------------------------------------------------
+  # load data -------------------------------------------------------------------
 
 
-foi_data <- read.csv(file.path("output", "extracted_covariates.csv"))
+  foi_covariates <- readRDS(file.path("output", "extracted_covariates.rds"))
 
-R0.M <- readRDS(file.path("output", "trait_R0_relationships", paste0(var, "_", covar, "_fluctuating_T.rds")))
-  
-
-# pre processing --------------------------------------------------------------
+  R0.M <- readRDS(file.path("output", "trait_R0_relationships", paste0(var, "_", covar, "_fluctuating_T.rds")))
 
 
-foi_data$pred_R0_1 <- R0.M
-
-x_range <- pretty(foi_data[, "R0_1"])
-y_range <- pretty(foi_data[, var])
-  
-lm <- lm(as.formula(paste0(var, "~ R0_1 - 1")), data = foi_data)
-r_sq <- round(summary(lm)$r.squared, 3)
+  # pre processing --------------------------------------------------------------
 
 
-# make plots ------------------------------------------------------------------
+  foi_covariates$pred_R0_1 <- R0.M
 
 
-dir.create(dir_save, FALSE, TRUE)
+  # make basic scatter plot and save
 
-png(file.path(dir_save, sprintf("obs_vs_%s_%s%s", var, covar, "_fluctuating_T.png")), 
-    width = 9, 
-    height = 8, 
-    units = "cm",
-    pointsize = 12,
-    res = 200)
+  p <- basic_scatter_plot(df = foi_covariates,
+                          x = covar,
+                          y = var)
+  save_plot(p,
+            out_pth = dir_save,
+            out_fl_nm = sprintf("%s_%s_%s", var, covar, "fluctuating_T.png"),
+            wdt = 8,
+            hgt = 8)
 
-par(mar = c(4, 4, 2, 1), oma = c(0, 0, 0, 0), xaxs = "i", yaxs = "i")
+  # make predictions vs observations plot
 
-plot(foi_data[, "R0_1"], 
-     foi_data[, var], 
-     xlim = c(0, max(x_range)),
-     ylim = c(0, max(y_range)),
-     xlab = "Observations", 
-     ylab = "Predictions", 
-     pch = 19, 
-     cex = 0.5, 
-     axes = FALSE)
+  p2 <- preds_vs_obs_scatter_plot(df = foi_covariates,
+                                  x = "R0_1",
+                                  y = var,
+                                  covar = covar)
 
-title(covar, cex.main = 1)
-axis(side = 1, at = x_range)
-axis(side = 2, at = y_range, las = 2)
+  save_plot(p2,
+            out_pth = dir_save,
+            out_fl_nm = sprintf("obs_vs_%s_%s_%s", var, covar, "fluctuating_T.png"),
+            wdt = 9,
+            hgt = 8)
 
-abline(reg = lm, col = "red", lwd = 2)
-text(10, 6, labels = bquote(R^2 == .(r_sq)), col = "red", lwd = 2)
-
-dev.off()
+}
