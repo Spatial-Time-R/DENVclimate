@@ -69,28 +69,16 @@ for (i in seq_along(covariates)){
   R0.M <- rowMeans(R0)
   foi_covariates$pred_R0_1 <- R0.M
 
+  # make plot and save
 
-  # make plots ------------------------------------------------------------------
+  p <- basic_scatter_plot(df = foi_covariates,
+                          x = covar,
+                          y = response)
 
-
-  dir.create(dir_save, FALSE, TRUE)
-
-  png(file.path(dir_save, paste0(response, "_", covar,".png")),
-      width = 8,
-      height = 8,
-      units = "cm",
-      pointsize = 12,
-      res = 200)
-
-  par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0))
-
-  plot(foi_covariates[, covar],
-       foi_covariates[, response],
-       xlab = covar,
-       ylab = response,
-       pch = 19,
-       cex = 0.5)
-
-  dev.off()
+  save_plot(p,
+            out_pth = dir_save,
+            out_fl_nm = paste0(response, "_", covar),
+            wdt = 8,
+            hgt = 8)
 
 }
