@@ -1,4 +1,4 @@
-# load results and save 
+# load results and save
 
 options(didehpc.cluster = "fi--didemrchnb")
 
@@ -34,21 +34,21 @@ covar <- covariates[1]
 # load data -------------------------------------------------------------------
 
 
-foi_data <- read.csv(file.path("output", "extracted_covariates.csv"))
+foi_covariates <- read.csv(file.path("output", "extracted_covariates.csv"))
 
 
-# are you using the cluster? --------------------------------------------------  
+# are you using the cluster? --------------------------------------------------
 
 
 if (CLUSTER) {
-  
+
   obj <- didehpc::queue_didehpc(ctx)
-  
+
 } else {
-  
+
   context::context_load(ctx)
   context::parallel_cluster_start(8, ctx)
-  
+
 }
 
 
