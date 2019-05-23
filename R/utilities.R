@@ -138,7 +138,7 @@ save_plot <- function(plot_obj, out_pth, out_fl_nm, wdt, hgt){
 #------------------------------------------------------------------------------
 #' basic_scatter_plot
 #'
-#' \code{basic_scatter_plot} save a png file of a plot
+#' \code{basic_scatter_plot} makes a basic scatter plot of x vs y.
 #'
 #' @param df dataframe with the data to plot.
 #' @param x variable to plot on the x axis.
@@ -149,14 +149,20 @@ save_plot <- function(plot_obj, out_pth, out_fl_nm, wdt, hgt){
 
 basic_scatter_plot <- function(df, x, y){
 
-  par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0))
+  par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), xaxs = "r", yaxs = "r")
 
   plot(df[, x],
        df[, y],
        xlab = x,
        ylab = y,
        pch = 19,
-       cex = 0.5)
+       cex = 0.5,
+       axes = FALSE)
+
+  axis(side = 1, las = 0)
+  axis(side = 2, las = 2)
+
+  box()
 
   p <- recordPlot()
 

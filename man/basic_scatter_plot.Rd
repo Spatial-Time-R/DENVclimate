@@ -14,5 +14,5 @@ basic_scatter_plot(df, x, y)
 \item{y}{variable to plot on the y axis.}
 }
 \description{
-\code{basic_scatter_plot} save a png file of a plot
+\code{basic_scatter_plot} makes a basic scatter plot of x vs y.
 }
