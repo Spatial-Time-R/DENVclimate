@@ -17,7 +17,7 @@
 #' @export
 
 
-plot_thermal_responses_all_data <- function(my_data, all_fits, out_pth){
+plot_thermal_responses_all_data <- function(my_data, all_fits, out_pth, out_fl_nm){
 
   p <- ggplot() +
     geom_point(aes(x = T, y = trait, colour = ref), data = my_data) +
@@ -29,7 +29,7 @@ plot_thermal_responses_all_data <- function(my_data, all_fits, out_pth){
 
   save_plot(p,
             out_pth,
-            out_fl_nm = "all_thermal_responses_uninf_priors.png",
+            out_fl_nm = paste0(out_fl_nm, ".png"),
             wdt = 23,
             hgt = 15)
 
@@ -53,7 +53,7 @@ plot_thermal_responses_all_data <- function(my_data, all_fits, out_pth){
 #' @export
 
 
-plot_thermal_responses_mean_data <- function(my_data_av, all_fits, out_pth){
+plot_thermal_responses_mean_data <- function(my_data_av, all_fits, out_pth, out_fl_nm){
 
   p <- ggplot() +
     geom_pointrange(aes(x = T, y = m, ymin = m - se, ymax = m + se), fatten = 2, size = 0.5, data = my_data_av) +
@@ -66,7 +66,7 @@ plot_thermal_responses_mean_data <- function(my_data_av, all_fits, out_pth){
 
   save_plot(p,
             out_pth,
-            out_fl_nm = "all_thermal_responses_uninf_priors_2.png",
+            out_fl_nm = paste0(out_fl_nm, ".png"),
             wdt = 18,
             hgt = 15)
 
