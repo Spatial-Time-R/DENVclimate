@@ -36,7 +36,6 @@ data.all <- subset(trait_data,
                    ref != as.character("Focks_Barrera_2006_Research&TrainingTropicalDis_Geneva_Paper"))
 
 
-
 # -----------------------------------------------------------------------------
 #
 # GCR
